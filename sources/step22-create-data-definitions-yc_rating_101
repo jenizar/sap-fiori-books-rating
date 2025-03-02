@@ -1,0 +1,16 @@
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Rating'
+@Metadata.allowExtensions: true
+define view entity YC_RATING_101 as projection on YI_RATING_101
+{
+    key RatingUuid,
+    
+    BooksUuid,
+    UserName,
+    Rating,    
+    RatingDate,
+    
+    /* Associations */
+    /* _Books */     
+      _Books : redirected to parent YC_BOOKS_101    
+}
