@@ -1,0 +1,5 @@
+@EndUserText.label: 'Books'
+define service YUI_BOOKS_101 {
+  expose YC_BOOKS_101  as Books;
+  expose YC_RATING_101 as Rating;
+}
