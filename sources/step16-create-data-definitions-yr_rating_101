@@ -1,0 +1,11 @@
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+
+@EndUserText.label: 'Rating'
+define view entity YR_RATING_101 as select from yrating_101
+{
+    key rating_uuid as RatingUuid,
+    books_uuid as BooksUuid,
+    user_name as UserName,
+    rating as Rating,
+    rating_date as RatingDate
+}
