@@ -1,0 +1,16 @@
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Rating'
+
+define view entity YI_RATING_101 as select from YR_RATING_101
+
+    association to parent YI_BOOKS_101 as _Books on $projection.BooksUuid = _Books.BooksUuid
+{
+    key RatingUuid,
+    BooksUuid,
+    UserName,
+    Rating,
+    RatingDate,
+    
+      /* Associations */
+      _Books
+}
