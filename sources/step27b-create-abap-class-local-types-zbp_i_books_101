@@ -1,0 +1,91 @@
+CLASS lhc_Books DEFINITION INHERITING FROM cl_abap_behavior_handler.
+  PRIVATE SECTION.
+    METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
+      IMPORTING keys REQUEST requested_authorizations FOR Books RESULT result.
+    METHODS validate_category FOR VALIDATE ON SAVE
+      IMPORTING keys FOR books~validate_category.
+
+ENDCLASS.
+
+
+CLASS lhc_Books IMPLEMENTATION.
+  METHOD get_instance_authorizations.
+  ENDMETHOD.
+
+  METHOD validate_category.
+    " Ausgewählte Filme lesen
+    READ ENTITY IN LOCAL MODE YI_BOOKS_101
+         FIELDS ( Category )
+         WITH CORRESPONDING #( keys )
+         RESULT FINAL(books).
+
+    " Filme sequentiell verarbeiten
+    LOOP AT books INTO FINAL(book).
+
+      " Genre prüfen und ggbfs. Fehlermeldung erstellen
+      SELECT SINGLE
+        FROM ddcds_customer_domain_value( p_domain_name = 'YDO_CATEGORY' )
+        FIELDS @abap_true
+        WHERE value_low = @book-Category
+        INTO @FINAL(exists).
+    ENDLOOP.
+  ENDMETHOD.
+
+ENDCLASS.
+
+CLASS lhc_rating DEFINITION INHERITING FROM cl_abap_behavior_handler.
+
+  PRIVATE SECTION.
+    METHODS determine_rating_date FOR DETERMINE ON MODIFY
+      IMPORTING keys FOR Rating~determine_rating_date.
+    METHODS determine_user_name FOR DETERMINE ON MODIFY
+      IMPORTING keys FOR Rating~determine_user_name.
+ENDCLASS.
+
+CLASS lhc_rating IMPLEMENTATION.
+  METHOD determine_rating_date.
+    " Ausgewählte Bewertungen lesen
+    READ ENTITY IN LOCAL MODE YI_RATING_101
+         FIELDS ( RatingUuid )
+         WITH CORRESPONDING #( keys )
+         RESULT DATA(ratings).
+
+    " Bewertungen sequentiell verarbeiten
+    LOOP AT ratings REFERENCE INTO DATA(rating). " LOOP AT ratings ASSIGNING FIELD-SYMBOL(<rating>).
+
+      " Bewertungsdatum ermittlen
+      rating->RatingDate = cl_abap_context_info=>get_system_date( ). " rating-RatingDate = cl_abap_context_info=>get_system_date( ).
+
+    ENDLOOP.
+
+    " Geänderte Bewertungen zurückschreiben
+    MODIFY ENTITY IN LOCAL MODE YI_RATING_101
+           UPDATE
+           FIELDS ( RatingDate )
+           WITH VALUE #( FOR r IN ratings
+                         ( %tky = r-%tky RatingDate = r-RatingDate ) ).
+  ENDMETHOD.
+
+  METHOD determine_user_name.
+    " Ausgewählte Bewertungen lesen
+    READ ENTITY IN LOCAL MODE YI_RATING_101
+         FIELDS ( RatingUuid )
+         WITH CORRESPONDING #( keys )
+         RESULT DATA(ratings).
+
+    " Bewertungen sequentiell verarbeiten
+    LOOP AT ratings REFERENCE INTO DATA(rating). " LOOP AT ratings ASSIGNING FIELD-SYMBOL(<rating>).
+
+      " Benutzername ermittlen
+      rating->UserName = sy-uname. " rating-UserName = sy-uname
+
+    ENDLOOP.
+
+    " Geänderte Bewertungen zurückschreiben
+    MODIFY ENTITY IN LOCAL MODE YI_RATING_101
+           UPDATE
+           FIELDS ( UserName )
+           WITH VALUE #( FOR r IN ratings
+                         ( %tky = r-%tky UserName = r-UserName ) ).
+  ENDMETHOD.
+ENDCLASS.
