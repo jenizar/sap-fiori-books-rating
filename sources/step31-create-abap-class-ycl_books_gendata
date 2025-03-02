@@ -1,0 +1,121 @@
+CLASS ycl_books_gendata DEFINITION
+  PUBLIC FINAL
+  CREATE PUBLIC.
+
+  PUBLIC SECTION.
+    INTERFACES if_oo_adt_classrun.
+ENDCLASS.
+
+
+
+CLASS ycl_books_gendata IMPLEMENTATION.
+
+   METHOD if_oo_adt_classrun~main.
+
+    DATA book   TYPE ybooks_101.
+    DATA books  TYPE TABLE OF ybooks_101.
+    DATA rating  TYPE yrating_101.
+    DATA ratings TYPE TABLE OF yrating_101.
+
+    FINAL(random) = cl_abap_random_int=>create( seed = CONV i( cl_abap_context_info=>get_system_date( ) )
+                                                min  = 1
+                                                max  = 10 ).
+    FINAL(bad_rating_random) = cl_abap_random_int=>create( seed = CONV i( cl_abap_context_info=>get_system_date( ) )
+                                                           min  = 1
+                                                           max  = 5 ).
+    FINAL(good_rating_random) = cl_abap_random_int=>create( seed = CONV i( cl_abap_context_info=>get_system_date( ) )
+                                                            min  = 7
+                                                            max  = 10 ).
+
+    " Delete Books
+    DELETE FROM ybooks_101.
+    IF sy-subrc <> 0.
+      out->write( |Error: DELETE FROM ybooks_101| ).
+    ENDIF.
+    out->write( |Deleted: { sy-dbcnt } books| ).
+
+    " Delete Ratings
+    DELETE FROM yrating_101.
+    IF sy-subrc <> 0.
+      out->write( |Error: DELETE FROM yrating_101| ).
+    ENDIF.
+    out->write( |Deleted: { sy-dbcnt } ratings| ).
+
+    " Maintain Admin Data for Movies
+    book-client = sy-mandt.
+    GET TIME STAMP FIELD book-created_at.
+    book-created_by = 'GENERATOR'.
+    GET TIME STAMP FIELD book-last_changed_at.
+    book-last_changed_by = 'GENERATOR'.
+
+    " Create Books
+    book-books_uuid      = cl_system_uuid=>create_uuid_x16_static( ).
+    book-title           = 'Artificial Intelligence A Modern Approach 4th ed.'.
+    book-category        = 'COMTECH'.
+    book-publishing_year = '2021'.
+    book-total_pages     = 1168.
+    book-publisher_comp  = 'Pearson Education Limited'.
+    book-image_url       = 'https://github.com/jenizar/sap-fiori-books-rating/blob/main/images/artificial-intelligence.jpg?raw=true'.
+    APPEND book TO books.
+
+    book-books_uuid      = cl_system_uuid=>create_uuid_x16_static( ).
+    book-title           = 'Complete Guide to Sewing'.
+    book-category        = 'CRFHOBBY'.
+    book-publishing_year = '2022'.
+    book-total_pages     = 384.
+    book-publisher_comp  = 'Trusted Media Brands'.
+    book-image_url       = 'https://github.com/jenizar/sap-fiori-books-rating/blob/main/images/complete-guide-to-sewing.jpg?raw=true'.
+    APPEND book TO books.
+
+    book-books_uuid      = cl_system_uuid=>create_uuid_x16_static( ).
+    book-title           = 'Complete PCB Design using OrCad'.
+    book-category        = 'ENGTRANSP'.
+    book-publishing_year = '2019'.
+    book-total_pages     = 612.
+    book-publisher_comp  = 'Academic Press'.
+    book-image_url       = 'https://github.com/jenizar/sap-fiori-books-rating/blob/main/images/complete-pcb-design-using-orcad.jpg?raw=true'.
+    APPEND book TO books.
+
+    " Maintain Admin Data for Ratings
+    rating-client = sy-mandt.
+
+    " Create Good Ratings
+    LOOP AT books INTO book FROM 1 TO 10.
+      DO random->get_next( ) TIMES.
+        rating-rating_uuid = cl_system_uuid=>create_uuid_x16_static( ).
+        rating-books_uuid  = book-books_uuid.
+        rating-rating      = good_rating_random->get_next( ).
+        rating-user_name   = |GENERATOR{ random->get_next( ) }|.
+        rating-rating_date = cl_abap_context_info=>get_system_date( ) - random->get_next( ).
+        APPEND rating TO ratings.
+      ENDDO.
+    ENDLOOP.
+
+    " Create Bad Ratings
+    LOOP AT books INTO book FROM 11 TO 15.
+      DO random->get_next( ) TIMES.
+        rating-rating_uuid = cl_system_uuid=>create_uuid_x16_static( ).
+        rating-books_uuid  = book-books_uuid.
+        rating-rating      = bad_rating_random->get_next( ).
+        rating-user_name   = |GENERATOR{ random->get_next( ) }|.
+        rating-rating_date = cl_abap_context_info=>get_system_date( ) - random->get_next( ).
+        APPEND rating TO ratings.
+      ENDDO.
+    ENDLOOP.
+
+    " Insert Books
+    INSERT ybooks_101 FROM TABLE @books.
+    IF sy-subrc <> 0.
+      out->write( |Error: INSERT ybooks_101 FROM TABLE @books| ).
+    ENDIF.
+    out->write( |Inserted: { sy-dbcnt } bookss| ).
+
+    " Insert BooksRatings
+    INSERT yrating_101 FROM TABLE @ratings.
+    IF sy-subrc <> 0.
+      out->write( |Error: INSERT yrating_101 FROM TABLE @ratings| ).
+    ENDIF.
+    out->write( |Inserted: { sy-dbcnt } ratings| ).
+   ENDMETHOD.
+
+ENDCLASS.
