@@ -1,0 +1,15 @@
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+
+@EndUserText.label: 'Average Rating'
+define view entity YI_AVERAGERATING_101 
+   as select from YR_RATING_101
+{
+    
+  key BooksUuid,
+  
+      @EndUserText.label: 'Average Rating'
+      @EndUserText.quickInfo: 'Average Rating'
+      avg(Rating as abap.dec(16,1)) as AverageRating   
+}
+
+  group by BooksUuid
