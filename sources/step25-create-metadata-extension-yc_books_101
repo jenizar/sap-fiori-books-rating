@@ -1,0 +1,81 @@
+@Metadata.layer: #CUSTOMER
+
+@UI.headerInfo: { typeNamePlural: 'Books',
+                  typeName: 'Books',
+                  title.value: 'Title',
+                  description.value: 'PublishingYear',
+                  imageUrl: 'ImageUrl' }
+
+@UI.lineItem: [ { criticality: 'AverageRatingCriticality' } ]
+@UI.presentationVariant: [ { sortOrder: [ { by: 'AverageRating', direction: #DESC } ] } ] 
+
+annotate entity YC_BOOKS_101 with 
+{
+  /* Actions */
+  @UI.facet: [ { position: 10, label: 'Books Details', type: #FIELDGROUP_REFERENCE, targetQualifier: 'Details' },
+               { position: 15, label: 'Ratings', type: #LINEITEM_REFERENCE, targetElement: '_Ratings' },
+               { position: 20, label: 'Administrative Data', type: #FIELDGROUP_REFERENCE, targetQualifier: 'Admin' } ]
+  /*
+  @UI.fieldGroup: [ { position: 10, qualifier: 'Admin' } ]
+  @UI.identification: [ { position: 10, type: #FOR_ACTION, label: 'Rate', dataAction: 'RateMovie' } ]
+  @UI.lineItem: [ { position: 10, type: #FOR_ACTION, label: 'Rate', dataAction: 'RateMovie' } ]  
+  */
+
+  /* Facets */
+
+  /* Fields */
+  BooksUuid;
+
+  @UI.fieldGroup: [ { position: 10, qualifier: 'Details' } ]
+  @UI.lineItem: [ { position: 10, cssDefault.width: '15em' } ]
+  Title;
+
+  @UI.fieldGroup: [ { position: 20, qualifier: 'Details' } ]
+  @UI.lineItem: [ { position: 20, cssDefault.width: '12em' } ]
+  @UI.selectionField: [ { position: 10 } ]
+  Category;
+
+  @UI.fieldGroup: [ { position: 30, qualifier: 'Details' } ]
+  @UI.lineItem: [ { position: 30, cssDefault.width: '8em' } ]
+  @UI.selectionField: [ { position: 20 } ]
+  PublishingYear;
+
+  @UI.fieldGroup: [ { position: 40, qualifier: 'Details' } ]
+  @UI.lineItem: [ { position: 40, cssDefault.width: '8em' } ]
+  @UI.selectionField: [ { position: 30 } ]
+  TotalPages;
+  
+  @UI.fieldGroup: [ { position: 50, qualifier: 'Details' } ]
+  @UI.lineItem: [ { position: 50, cssDefault.width: '13em' } ]
+  @UI.selectionField: [ { position: 40 } ]
+  PublisherComp;
+  
+  @UI.fieldGroup: [ { position: 60, qualifier: 'Details' } ]
+  @UI.lineItem: [ { position: 1 } ]
+  ImageUrl;
+
+  @UI.fieldGroup: [ { position: 20, qualifier: 'Admin' } ]
+  CreatedAt;
+
+  @UI.fieldGroup: [ { position: 30, qualifier: 'Admin' } ]
+  CreatedBy;
+
+  @UI.fieldGroup: [ { position: 40, qualifier: 'Admin' } ]
+  LastChangedAt;
+
+  @UI.fieldGroup: [ { position: 50, qualifier: 'Admin' } ]
+  LastChangedBy;
+
+  @UI.dataPoint: { targetValue: 10,
+                   visualization: #RATING,
+                   criticality: 'AverageRatingCriticality',
+                   criticalityRepresentation: #WITHOUT_ICON }
+  @UI.lineItem: [ { position: 999, criticality: 'AverageRatingCriticality', 
+                  criticalityRepresentation: #WITHOUT_ICON,
+                  cssDefault.width: '10em' } ]
+  @UI.selectionField: [ { position: 50 } ]
+  AverageRating;
+
+  @UI.hidden: true 
+  AverageRatingCriticality;   
+}
