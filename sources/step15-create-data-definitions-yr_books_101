@@ -1,0 +1,27 @@
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Books'
+
+define view entity YR_BOOKS_101 as select from ybooks_101
+{
+    key books_uuid as BooksUuid,
+    title as Title,
+    category as Category,
+    publishing_year as PublishingYear,
+    total_pages as TotalPages,
+    publisher_comp as PublisherComp,
+    
+    @Semantics.imageUrl: true
+    image_url as ImageUrl,
+    
+    @Semantics.systemDateTime.createdAt: true
+    created_at as CreatedAt,
+    
+    @Semantics.user.createdBy: true
+    created_by as CreatedBy,
+    
+    @Semantics.systemDateTime.lastChangedAt: true
+    last_changed_at as LastChangedAt,
+    
+    @Semantics.user.lastChangedBy: true
+    last_changed_by as LastChangedBy
+}
