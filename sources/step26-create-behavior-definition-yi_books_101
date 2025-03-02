@@ -1,0 +1,61 @@
+managed implementation in class zbp_i_books_101 unique;
+strict ( 2 );
+
+define behavior for YI_BOOKS_101 alias Books//alias <alias_name>
+persistent table ybooks_101//persistent table <???>
+lock master
+authorization master ( instance )
+//etag master <field_name>
+{
+  create;
+  update;
+  delete;
+  association _Ratings { create; }
+
+  field ( readonly, numbering : managed ) BooksUuid;
+  field ( mandatory : create ) Title, Category, PublishingYear, TotalPages, PublisherComp;
+  field ( readonly : update ) Title, Category, PublishingYear, TotalPages, PublisherComp;
+  field ( readonly ) CreatedAt, CreatedBy, LastChangedAt, LastChangedBy;
+
+  validation validate_category on save { create; }
+
+  mapping for ybooks_101 corresponding
+    {
+      CreatedAt      = created_at;
+      CreatedBy      = created_by;
+      ImageUrl       = image_url;
+      LastChangedAt  = last_changed_at;
+      LastChangedBy  = last_changed_by;
+      BooksUuid      = books_uuid;
+      PublishingYear = publishing_year;
+      TotalPages     = total_pages;
+    }
+
+}
+
+define behavior for YI_RATING_101 alias Rating//alias <alias_name>
+persistent table yrating_101
+lock dependent by _Books
+authorization dependent by _Books
+//etag master <field_name>
+{
+  update;
+  delete;
+  association _Books;
+
+  field ( readonly, numbering : managed ) RatingUuid;
+  field ( readonly ) BooksUuid, UserName, RatingDate;
+  field ( mandatory ) Rating;
+
+  determination determine_user_name on modify { create; }   // Behavior Definition call class zbp_bi_054906_movie (Local Types)
+  determination determine_rating_date on modify { create; } // Behavior Definition call class zbp_bi_054906_movie (Local Types)
+
+  mapping for yrating_101 corresponding
+    {
+      BooksUuid  = books_uuid;
+      RatingDate = rating_date;
+      RatingUuid = rating_uuid;
+      UserName   = user_name;
+    }
+}
+
