@@ -1,0 +1,19 @@
+@EndUserText.label : 'Rating'
+@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory : #TRANSPARENT
+@AbapCatalog.deliveryClass : #A
+@AbapCatalog.dataMaintenance : #RESTRICTED
+define table yrating_101 {
+
+  key client      : abap.clnt not null;
+  key rating_uuid : yde_rating_uuid not null;
+  @AbapCatalog.foreignKey.screenCheck : false
+  books_uuid      : yde_books_uuid not null
+    with foreign key ybooks_101
+      where client = yrating_101.client
+        and books_uuid = yrating_101.books_uuid;
+  user_name       : yde_username;
+  rating          : yde_rating;
+  rating_date     : yde_rating_date;
+
+}
