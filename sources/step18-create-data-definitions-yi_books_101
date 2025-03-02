@@ -1,0 +1,36 @@
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Books'
+
+/*+[hideWarning] { "IDS" : [ "CARDINALITY_CHECK" ]  } */
+define root view entity YI_BOOKS_101 as select from YR_BOOKS_101
+  association [0..1] to YI_AVERAGERATING_101 as _AverageRating on $projection.BooksUuid = _AverageRating.BooksUuid
+  association [1..1] to YI_CATEGTEXT_101     as _CategText     on $projection.Category = _CategText.CategValue
+  composition [0..*] of YI_RATING_101        as _Ratings
+
+{
+    key BooksUuid,
+    Title,
+    Category,
+    PublishingYear,
+    TotalPages,
+    PublisherComp,
+    ImageUrl,
+    CreatedAt,
+    CreatedBy,
+    LastChangedAt,
+    LastChangedBy,
+    
+    _AverageRating.AverageRating as AverageRating,
+    
+      case when _AverageRating.AverageRating > 6.7 then 3
+           when _AverageRating.AverageRating > 3.4 then 2
+           when _AverageRating.AverageRating > 0 then 1
+           else 0
+      end             as AverageRatingCriticality,
+
+      /* Associations */
+      _Ratings,
+      _AverageRating,
+      _CategText     
+
+}
