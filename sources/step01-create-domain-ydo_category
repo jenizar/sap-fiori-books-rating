@@ -1,0 +1,17 @@
+YDO_CATEGORY (Category)
+Data Type : CHAR
+
+Length : 10
+
+Fix Value : Description
+BUSMONEY : Business & Money
+COMTECH : Computers & Technology
+SCIMATH : Science & Math
+ENGTRANSP : Engineering & Transportation
+POLSCI : Political & Social Sciences
+SPORTS : Sports & Outdoor
+HISTORY : History
+APHOTOG : Arts & Photography
+CRFHOBBY : Crafts & Hobbies
+LANGSTUDY : Language Study
+CHILBOOK : Children Book
