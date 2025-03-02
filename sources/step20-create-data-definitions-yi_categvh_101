@@ -1,0 +1,26 @@
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Value Help for Categories'
+
+define view entity YI_CATEGVH_101 
+as select from DDCDS_CUSTOMER_DOMAIN_VALUE_T(
+                    p_domain_name : 'YDO_CATEGORY')
+{
+
+      @UI.hidden: true
+  key domain_name,
+
+      @UI.hidden: true
+  key value_position,
+
+      @UI.hidden: true
+  key language,
+
+      @EndUserText.label: 'Category Value'
+      @EndUserText.quickInfo: 'Category Value'
+      value_low       as CategValue,
+
+      @EndUserText.label: 'Category Text'
+      @EndUserText.quickInfo: 'Category Text'
+      text            as CategText
+    
+}
