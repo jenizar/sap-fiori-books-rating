@@ -1,0 +1,41 @@
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Books'
+
+@Metadata.allowExtensions: true
+
+@Search.searchable: true
+define root view entity YC_BOOKS_101
+ provider contract transactional_query
+  as projection on YI_BOOKS_101
+{
+    key BooksUuid,
+    
+    @Search.defaultSearchElement: true
+    @Search.fuzzinessThreshold: 0.7
+    Title,
+    
+     @Consumption.valueHelpDefinition: [ { entity: { name: 'YI_CategVH_101', element: 'CategValue' } } ]
+     @ObjectModel.text.element: [ 'CategText' ]
+    Category,
+    
+    PublishingYear,
+    TotalPages,
+    PublisherComp,
+    ImageUrl,
+    
+    AverageRating,
+    
+    CreatedAt,
+    CreatedBy,
+    
+    LastChangedAt,
+    LastChangedBy,
+    
+    /* Associations */
+    _AverageRating,
+    AverageRatingCriticality,
+    _CategText.CategText,
+    
+    _Ratings : redirected to composition child YC_RATING_101
+    
+}
